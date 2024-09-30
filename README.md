@@ -1,6 +1,6 @@
 # Bevy Learning
 
-A repo to learn about and experiment with the [Bevy](https://bevyengine.org/) game engine.
+A repo to learn about and experiment with the [Bevy](https://bevyengine.org) game engine.
 
 ## Resources Used
 
