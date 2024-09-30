@@ -21,6 +21,12 @@ fn spawn_snake(mut commands: Commands) {
 		.insert(SnakeHead);
 }
 
+fn snake_movement(mut head_positions: Query<(&SnakeHead, &mut Transform)>) {
+	for (_head, mut transform) in head_positions.iter_mut() {
+		transform.translation.y += 2.;
+	}
+}
+
 fn setup(mut commands: Commands) {
 	commands.spawn(Camera2dBundle::default());
 }
@@ -30,5 +36,6 @@ fn main() {
 		.add_plugins(DefaultPlugins)
 		.add_systems(Startup, setup)
 		.add_systems(Startup, spawn_snake)
+		.add_systems(Update, snake_movement)
 		.run();
 }
