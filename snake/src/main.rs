@@ -74,10 +74,24 @@ fn position_translation(mut windows: Query<&mut Window>, mut q: Query<(&Position
 	}
 }
 
-fn snake_movement(mut head_positions: Query<(&SnakeHead, &mut Transform)>) {
-	for (_head, mut transform) in head_positions.iter_mut() {
-		transform.translation.y += 2.;
-	}
+fn snake_movement(
+	keyboard_input: Res<ButtonInput<KeyCode>>,
+	mut head_positions: Query<&mut Position, With<SnakeHead>>,
+) {
+	for mut position in head_positions.iter_mut() {
+		if keyboard_input.pressed(KeyCode::ArrowLeft) {
+			position.x -= 1;
+		}
+		if keyboard_input.pressed(KeyCode::ArrowRight) {
+			position.x += 1;
+		}
+		if keyboard_input.pressed(KeyCode::ArrowDown) {
+			position.y -= 1;
+		}
+		if keyboard_input.pressed(KeyCode::ArrowUp) {
+			position.y += 1;
+		}
+	};
 }
 
 fn setup(mut commands: Commands) {
