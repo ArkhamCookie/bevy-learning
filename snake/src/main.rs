@@ -16,7 +16,7 @@ struct Size {
 	height: f32,
 }
 impl Size {
-	pub fn square(x: f32) -> Self {
+	fn square(x: f32) -> Self {
 		Self {
 			width: x,
 			height: x,
