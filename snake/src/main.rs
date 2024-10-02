@@ -1,6 +1,8 @@
 use bevy::prelude::*;
+use rand::prelude::random;
 
 const SNAKE_HEAD_COLOR: Color = Color::srgb(0.7, 0.7, 0.7);
+const FOOD_COLOR: Color = Color::srgb(1.0, 0.0, 0.0);
 const ARENA_WIDTH: u32 = 10;
 const ARENA_HEIGHT: u32 = 10;
 
@@ -25,7 +27,28 @@ impl Size {
 }
 
 #[derive(Component)]
+struct Food;
+
+#[derive(Component)]
 struct SnakeHead;
+
+fn food_spawner(mut commands: Commands) {
+	commands
+		.spawn(SpriteBundle {
+			sprite: Sprite {
+				color: FOOD_COLOR,
+				..default()
+			},
+			..default()
+		})
+		.insert(Food)
+		.insert(Position {
+			x: (random::<f32>() * ARENA_WIDTH as f32) as i32,
+			y: (random::<f32>() * ARENA_HEIGHT as f32) as i32,
+		})
+		.insert(Size::square(0.8));
+
+}
 
 fn spawn_snake(mut commands: Commands) {
 	commands
