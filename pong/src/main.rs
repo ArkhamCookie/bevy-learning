@@ -53,14 +53,15 @@ fn spawn_players(mut commands: Commands) {
 fn move_paddle(
 	mut paddles: Query<(&mut Transform, &Paddle)>,
 	input: Res<ButtonInput<KeyCode>>,
+	time: Res<Time>,
 ) {
 	for (mut pos, settings) in &mut paddles {
 		if input.pressed(settings.move_up) {
-			pos.translation.y += 1.0;
+			pos.translation.y += 100.0 * time.delta_seconds();
 		}
 
 		if input.pressed(settings.move_down) {
-			pos.translation.y -= 1.0;
+			pos.translation.y -= 100.0 * time.delta_seconds();
 		}
 	}
 }
