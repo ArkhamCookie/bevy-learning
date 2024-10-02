@@ -1,5 +1,8 @@
 use bevy::prelude::*;
 
+const PADDLE_HEIGHT: f32 = 150.0;
+const PADDLE_WIDTH: f32 = 10.0;
+
 #[derive(Component)]
 struct Paddle {
 	move_up: KeyCode,
@@ -26,7 +29,7 @@ fn spawn_players(mut commands: Commands) {
 		transform: Transform::from_translation(Vec3::new(-300.0, 0.0, 0.0)),
 		sprite: Sprite {
 			color: Color::WHITE,
-			custom_size: Some(Vec2::new(10.0, 150.0)),
+			custom_size: Some(Vec2::new(PADDLE_WIDTH, PADDLE_HEIGHT)),
 			..Default::default()
 		},
 		..Default::default()
@@ -40,7 +43,7 @@ fn spawn_players(mut commands: Commands) {
 		transform: Transform::from_translation(Vec3::new(300.0, 0.0, 0.0)),
 		sprite: Sprite {
 			color: Color::WHITE,
-			custom_size: Some(Vec2::new(10.0, 150.0)),
+			custom_size: Some(Vec2::new(PADDLE_WIDTH, PADDLE_HEIGHT)),
 			..Default::default()
 		},
 		..Default::default()
