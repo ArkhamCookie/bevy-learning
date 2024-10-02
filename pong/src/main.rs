@@ -1,5 +1,11 @@
 use bevy::prelude::*;
 
+#[derive(Component)]
+struct Paddle {
+	move_up: KeyCode,
+	move_down: KeyCode,
+}
+
 fn spawn_camera(mut commands: Commands) {
 	commands.spawn(Camera2dBundle::default());
 }
@@ -42,12 +48,6 @@ fn spawn_players(mut commands: Commands) {
 		move_up: KeyCode::ArrowUp,
 		move_down: KeyCode::ArrowDown,
 	}));
-}
-
-#[derive(Component)]
-struct Paddle {
-	move_up: KeyCode,
-	move_down: KeyCode,
 }
 
 fn main() {
