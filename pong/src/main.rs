@@ -50,9 +50,25 @@ fn spawn_players(mut commands: Commands) {
 	}));
 }
 
+fn move_paddle(
+	mut paddles: Query<(&mut Transform, &Paddle)>,
+	input: Res<ButtonInput<KeyCode>>,
+) {
+	for (mut pos, settings) in &mut paddles {
+		if input.pressed(settings.move_up) {
+			pos.translation.y += 1.0;
+		}
+
+		if input.pressed(settings.move_down) {
+			pos.translation.y -= 1.0;
+		}
+	}
+}
+
 fn main() {
 	let mut app = App::new();
 	app.add_plugins(DefaultPlugins);
 	app.add_systems(Startup, (spawn_camera, spawn_players));
+	app.add_systems(Update, move_paddle);
 	app.run();
 }
