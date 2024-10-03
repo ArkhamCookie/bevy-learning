@@ -149,8 +149,75 @@ fn spawn_ball(mut commands: Commands) {
 		Restitution {
 			coefficient: 1.1,
 			combine_rule: CoefficientCombineRule::Max,
-		}
+		},
 	));
+}
+
+/// Render/spawn in score
+fn spawn_score(mut commands: Commands) {
+	commands
+		.spawn(NodeBundle {
+			style: Style {
+				position_type: PositionType::Absolute,
+				margin: UiRect::horizontal(Val::Auto),
+				top: Val::ZERO,
+				width: Val::Percent(30.0),
+				height: Val::Percent(20.0),
+				..Default::default()
+			},
+			..Default::default()
+		})
+		.with_children(|p| {
+			p.spawn((
+				TextBundle {
+					text: Text {
+						sections: vec![TextSection {
+							value: "0".to_string(),
+							style: TextStyle {
+								font_size: 100.,
+								..Default::default()
+							},
+						}],
+						..Default::default()
+					},
+					..Default::default()
+				}
+				.with_text_justify(JustifyText::Center),
+				Player::Player1,
+			));
+
+			p.spawn(TextBundle {
+				text: Text {
+					sections: vec![TextSection {
+						value: "|".to_string(),
+						style: TextStyle {
+							font_size: 100.,
+							..Default::default()
+						},
+					}],
+					..Default::default()
+				},
+				..Default::default()
+			});
+
+			p.spawn((
+				TextBundle {
+					text: Text {
+						sections: vec![TextSection {
+							value: "0".to_string(),
+							style: TextStyle {
+								font_size: 100.,
+								..Default::default()
+							},
+						}],
+						..Default::default()
+					},
+					..Default::default()
+				}
+				.with_text_justify(JustifyText::Center),
+				Player::Player2,
+			));
+		});
 }
 
 /// Detect when a reset should be triggered
@@ -247,6 +314,7 @@ fn main() {
 			spawn_border,
 			spawn_players,
 			spawn_ball,
+			spawn_score,
 		),
 	);
 	app.add_systems(Update, (move_paddle, detect_reset));
