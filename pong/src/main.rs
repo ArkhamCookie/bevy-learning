@@ -70,7 +70,7 @@ fn spawn_border(mut commands: Commands) {
 			..Default::default()
 		},
 		RigidBody::Fixed,
-		Collider::cuboid(WINDOW_HEIGHT / 2.0, 3.0),
+		Collider::cuboid(3.0, WINDOW_HEIGHT / 2.0),
 		Player::Player1,
 		Sensor,
 	));
@@ -81,7 +81,7 @@ fn spawn_border(mut commands: Commands) {
 			..Default::default()
 		},
 		RigidBody::Fixed,
-		Collider::cuboid(WINDOW_HEIGHT / 2.0, 3.0),
+		Collider::cuboid(3.0, WINDOW_HEIGHT / 2.0),
 		Player::Player2,
 		Sensor,
 	));
@@ -138,7 +138,6 @@ fn spawn_ball(mut commands: Commands) {
 		Ball,
 		RigidBody::Dynamic,
 		CollidingEntities::default(),
-		// TODO: Fix ball not moving when `ActiveEvents` is tracked
 		ActiveEvents::COLLISION_EVENTS,
 		Collider::ball(BALL_SIZE),
 		Velocity::linear(Vec2::new(100.0, 0.0)),
