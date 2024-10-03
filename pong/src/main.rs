@@ -58,6 +58,7 @@ fn spawn_players(mut commands: Commands) {
 	}));
 }
 
+/// Spawn in ball
 fn spawn_ball(mut commands: Commands) {
 	commands.spawn((SpriteBundle {
 		transform: Transform::from_translation(Vec3::new(-300.0, 0.0, 0.0)),
