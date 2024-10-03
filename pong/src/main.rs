@@ -61,10 +61,12 @@ fn move_paddle(
 	for (mut pos, settings) in &mut paddles {
 		if input.pressed(settings.move_up) {
 			pos.translation.y += 100.0 * time.delta_seconds();
+			pos.translation.y = pos.translation.y.clamp(-250.0 + (PADDLE_HEIGHT / 2.0), 250.0 - (PADDLE_HEIGHT / 2.0));
 		}
 
 		if input.pressed(settings.move_down) {
 			pos.translation.y -= 100.0 * time.delta_seconds();
+			pos.translation.y = pos.translation.y.clamp(-250.0 + (PADDLE_HEIGHT / 2.0), 250.0 - (PADDLE_HEIGHT / 2.0));
 		}
 	}
 }
