@@ -1,6 +1,5 @@
 use bevy::{prelude::*, window::WindowResolution};
 use bevy_rapier2d::prelude::*;
-use rand::Rng;
 
 const WINDOW_HEIGHT: f32 = 720.0;
 const WINDOW_WIDTH: f32 = 720.0;
@@ -16,11 +15,22 @@ struct Paddle {
 }
 
 #[derive(Component)]
-struct Ball(Vec2);
+struct Ball;
 
 /// Spawn in camera
 fn spawn_camera(mut commands: Commands) {
 	commands.spawn(Camera2dBundle::default());
+}
+
+fn spawn_border(mut commands: Commands) {
+	commands.spawn((
+		SpatialBundle {
+			transform: Transform::from_translation(Vec3::new(0.0, WINDOW_HEIGHT / 2.0, 0.0)),
+			..Default::default()
+		},
+		RigidBody::Fixed,
+		Collider::cuboid(WINDOW_WIDTH / 2.0, 3.0)
+	));
 }
 
 /// Spawn in players and play area
@@ -37,7 +47,10 @@ fn spawn_players(mut commands: Commands) {
 	}, Paddle {
 		move_up: KeyCode::KeyW,
 		move_down: KeyCode::KeyS,
-	}));
+	},
+		RigidBody::KinematicPositionBased,
+		Collider::cuboid(PADDLE_WIDTH / 2.0, PADDLE_HEIGHT / 2.0),
+	));
 
 	// Spawn Player 2
 	commands.spawn((SpriteBundle {
@@ -51,7 +64,10 @@ fn spawn_players(mut commands: Commands) {
 	}, Paddle {
 		move_up: KeyCode::ArrowUp,
 		move_down: KeyCode::ArrowDown,
-	}));
+	},
+		RigidBody::KinematicPositionBased,
+		Collider::cuboid(PADDLE_WIDTH / 2.0, PADDLE_HEIGHT / 2.0),
+	));
 }
 
 /// Spawn in ball
@@ -64,7 +80,16 @@ fn spawn_ball(mut commands: Commands) {
 			..Default::default()
 		},
 		..Default::default()
-	}, Ball(Vec2::new(-100.0, 0.0))));
+	},
+		Ball,
+		RigidBody::Dynamic,
+		Collider::ball(BALL_SIZE),
+		Velocity::linear(Vec2::new(100.0, 0.0)),
+		Restitution {
+			coefficient: 1.1,
+			combine_rule: CoefficientCombineRule::Max,
+		}
+	));
 }
 
 /// Move paddles based on input
@@ -86,40 +111,6 @@ fn move_paddle(
 	}
 }
 
-/// Move ball
-fn move_ball(
-	mut balls: Query<(&mut Transform, &Ball)>,
-	time: Res<Time>,
-) {
-	for (mut pos, ball) in &mut balls {
-		pos.translation += ball.0.extend(0.0) * time.delta_seconds();
-	}
-}
-
-/// Add ball collision
-fn ball_collide(
-	mut balls: Query<(&Transform, &mut Ball)>,
-	paddles: Query<&Transform, With<Paddle>>,
-) {
-	for (ball, mut velocity) in &mut balls {
-		if ball.translation.y.abs() + BALL_SIZE / 2.0 > WINDOW_HEIGHT / 2.0 {
-			velocity.0.y *= -1.0;
-		}
-
-		for paddle in &paddles {
-			if
-				ball.translation.x - BALL_SIZE / 2.0 < paddle.translation.x + PADDLE_WIDTH / 2.0 &&
-				ball.translation.y - BALL_SIZE / 2.0 < paddle.translation.y + PADDLE_HEIGHT / 2.0 &&
-				ball.translation.x + BALL_SIZE / 2.0 > paddle.translation.x - PADDLE_WIDTH / 2.0 &&
-				ball.translation.y + BALL_SIZE / 2.0 > paddle.translation.y - PADDLE_HEIGHT / 2.0 {
-					velocity.0 *= -1.0;
-					// TODO: Make ball direction based on paddle direction
-					velocity.0.y = rand::thread_rng().gen_range(-1.0..1.0) * 100.0;
-				}
-		}
-	}
-}
-
 /// Create and start game
 fn main() {
 	let mut app = App::new();
@@ -132,10 +123,14 @@ fn main() {
 		}),
 		..Default::default()
 	}));
+	app.insert_resource(RapierConfiguration {
+		gravity: Vec2::ZERO,
+		..RapierConfiguration::new(1.0)
+	});
 	app.add_plugins(RapierPhysicsPlugin::<NoUserData>::default());
 	#[cfg(debug_assertions)]
 	app.add_plugins(RapierDebugRenderPlugin::default());
-	app.add_systems(Startup, (spawn_camera, spawn_players, spawn_ball));
-	app.add_systems(Update, (move_paddle, move_ball, ball_collide));
+	app.add_systems(Startup, (spawn_camera, spawn_border, spawn_players, spawn_ball));
+	app.add_systems(Update, move_paddle);
 	app.run();
 }
