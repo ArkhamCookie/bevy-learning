@@ -64,22 +64,24 @@ fn spawn_border(mut commands: Commands) {
 		Collider::cuboid(WINDOW_WIDTH / 2.0, 3.0)
 	));
 	// Add trigger for right side border of screen
-	commands.spawn((SpatialBundle {
-			transform: Transform::from_translation(Vec3::new(WINDOW_HEIGHT / 2.0, 0.0, 0.0)),
+	commands.spawn((
+		SpatialBundle {
+			transform: Transform::from_translation(Vec3::new(WINDOW_WIDTH / 2.0, 0.0, 0.0)),
 			..Default::default()
 		},
 		RigidBody::Fixed,
-		Collider::cuboid(WINDOW_WIDTH / 2.0, 3.0),
+		Collider::cuboid(WINDOW_HEIGHT / 2.0, 3.0),
 		Player::Player1,
 		Sensor,
 	));
 	// Add trigger for left side border of screen
-	commands.spawn((SpatialBundle {
-			transform: Transform::from_translation(Vec3::new(-WINDOW_HEIGHT / 2.0, 0.0, 0.0)),
+	commands.spawn((
+		SpatialBundle {
+			transform: Transform::from_translation(Vec3::new(-WINDOW_WIDTH / 2.0, 0.0, 0.0)),
 			..Default::default()
 		},
 		RigidBody::Fixed,
-		Collider::cuboid(WINDOW_WIDTH / 2.0, 3.0),
+		Collider::cuboid(WINDOW_HEIGHT / 2.0, 3.0),
 		Player::Player2,
 		Sensor,
 	));
@@ -137,7 +139,7 @@ fn spawn_ball(mut commands: Commands) {
 		RigidBody::Dynamic,
 		CollidingEntities::default(),
 		// TODO: Fix ball not moving when `ActiveEvents` is tracked
-		// ActiveEvents::COLLISION_EVENTS,
+		ActiveEvents::COLLISION_EVENTS,
 		Collider::ball(BALL_SIZE),
 		Velocity::linear(Vec2::new(100.0, 0.0)),
 		Restitution {
