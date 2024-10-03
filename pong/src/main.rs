@@ -1,4 +1,5 @@
 use bevy::{prelude::*, window::WindowResolution};
+use bevy_rapier2d::prelude::*;
 use rand::Rng;
 
 const WINDOW_HEIGHT: f32 = 720.0;
@@ -131,6 +132,7 @@ fn main() {
 		}),
 		..Default::default()
 	}));
+	app.add_plugins(RapierPhysicsPlugin::<NoUserData>::default());
 	app.add_systems(Startup, (spawn_camera, spawn_players, spawn_ball));
 	app.add_systems(Update, (move_paddle, move_ball, ball_collide));
 	app.run();
