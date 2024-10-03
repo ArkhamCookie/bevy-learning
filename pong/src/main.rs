@@ -108,6 +108,10 @@ fn ball_collide(
 	paddles: Query<&Transform, With<Paddle>>,
 ) {
 	for (ball, mut velocity) in &mut balls {
+		if ball.translation.y.abs() + BALL_SIZE / 2.0 > 250.0 {
+			velocity.0.y *= -1.0;
+		}
+
 		for paddle in &paddles {
 			if
 				ball.translation.x - BALL_SIZE / 2.0 < paddle.translation.x + PADDLE_WIDTH / 2.0 &&
