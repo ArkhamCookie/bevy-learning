@@ -52,7 +52,7 @@ fn spawn_border(mut commands: Commands) {
 			..Default::default()
 		},
 		RigidBody::Fixed,
-		Collider::cuboid(WINDOW_WIDTH / 2.0, 3.0)
+		Collider::cuboid(WINDOW_WIDTH / 2.0, 3.0),
 	));
 	// Add collision to bottom of screen
 	commands.spawn((
@@ -61,7 +61,7 @@ fn spawn_border(mut commands: Commands) {
 			..Default::default()
 		},
 		RigidBody::Fixed,
-		Collider::cuboid(WINDOW_WIDTH / 2.0, 3.0)
+		Collider::cuboid(WINDOW_WIDTH / 2.0, 3.0),
 	));
 	// Add trigger for right side border of screen
 	commands.spawn((
@@ -90,35 +90,39 @@ fn spawn_border(mut commands: Commands) {
 /// Spawn in players and play area
 fn spawn_players(mut commands: Commands) {
 	// Spawn Player 1
-	commands.spawn((SpriteBundle {
-		transform: Transform::from_translation(Vec3::new(-WINDOW_WIDTH / 2.0 + 20.0 , 0.0, 0.0)),
-		sprite: Sprite {
-			color: Color::WHITE,
-			custom_size: Some(Vec2::new(PADDLE_WIDTH, PADDLE_HEIGHT)),
+	commands.spawn((
+		SpriteBundle {
+			transform: Transform::from_translation(Vec3::new(-WINDOW_WIDTH / 2.0 + 20.0, 0.0, 0.0)),
+			sprite: Sprite {
+				color: Color::WHITE,
+				custom_size: Some(Vec2::new(PADDLE_WIDTH, PADDLE_HEIGHT)),
+				..Default::default()
+			},
 			..Default::default()
 		},
-		..Default::default()
-	}, Paddle {
-		move_up: KeyCode::KeyW,
-		move_down: KeyCode::KeyS,
-	},
+		Paddle {
+			move_up: KeyCode::KeyW,
+			move_down: KeyCode::KeyS,
+		},
 		RigidBody::KinematicPositionBased,
 		Collider::cuboid(PADDLE_WIDTH / 2.0, PADDLE_HEIGHT / 2.0),
 	));
 
 	// Spawn Player 2
-	commands.spawn((SpriteBundle {
-		transform: Transform::from_translation(Vec3::new(WINDOW_WIDTH / 2.0 + -20.0, 0.0, 0.0)),
-		sprite: Sprite {
-			color: Color::WHITE,
-			custom_size: Some(Vec2::new(PADDLE_WIDTH, PADDLE_HEIGHT)),
+	commands.spawn((
+		SpriteBundle {
+			transform: Transform::from_translation(Vec3::new(WINDOW_WIDTH / 2.0 + -20.0, 0.0, 0.0)),
+			sprite: Sprite {
+				color: Color::WHITE,
+				custom_size: Some(Vec2::new(PADDLE_WIDTH, PADDLE_HEIGHT)),
+				..Default::default()
+			},
 			..Default::default()
 		},
-		..Default::default()
-	}, Paddle {
-		move_up: KeyCode::ArrowUp,
-		move_down: KeyCode::ArrowDown,
-	},
+		Paddle {
+			move_up: KeyCode::ArrowUp,
+			move_down: KeyCode::ArrowDown,
+		},
 		RigidBody::KinematicPositionBased,
 		Collider::cuboid(PADDLE_WIDTH / 2.0, PADDLE_HEIGHT / 2.0),
 	));
@@ -126,15 +130,16 @@ fn spawn_players(mut commands: Commands) {
 
 /// Spawn in ball
 fn spawn_ball(mut commands: Commands) {
-	commands.spawn((SpriteBundle {
-		transform: Transform::from_translation(Vec3::new(0.0, 0.0, 0.0)),
-		sprite: Sprite {
-			color: Color::srgb(0.0, 0.0, 10.0),
-			custom_size: Some(Vec2::new(BALL_SIZE, BALL_SIZE)),
+	commands.spawn((
+		SpriteBundle {
+			transform: Transform::from_translation(Vec3::new(0.0, 0.0, 0.0)),
+			sprite: Sprite {
+				color: Color::srgb(0.0, 0.0, 10.0),
+				custom_size: Some(Vec2::new(BALL_SIZE, BALL_SIZE)),
+				..Default::default()
+			},
 			..Default::default()
 		},
-		..Default::default()
-	},
 		Ball,
 		RigidBody::Dynamic,
 		CollidingEntities::default(),
@@ -163,7 +168,7 @@ fn detect_reset(
 		};
 
 		game_events.send(GameEvents::ResetBall(player));
-		return
+		return;
 	}
 	for ball in &balls {
 		for hit in ball.iter() {
@@ -186,7 +191,7 @@ fn reset_ball(
 					ball.translation = Vec3::ZERO;
 					*speed = player.start_speed();
 				}
-			},
+			}
 		}
 	}
 }
@@ -200,12 +205,18 @@ fn move_paddle(
 	for (mut pos, settings) in &mut paddles {
 		if input.pressed(settings.move_up) {
 			pos.translation.y += 100.0 * time.delta_seconds();
-			pos.translation.y = pos.translation.y.clamp((-WINDOW_HEIGHT / 2.0) + 75.0, (WINDOW_HEIGHT / 2.) - 75.0);
+			pos.translation.y = pos
+				.translation
+				.y
+				.clamp((-WINDOW_HEIGHT / 2.0) + 75.0, (WINDOW_HEIGHT / 2.) - 75.0);
 		}
 
 		if input.pressed(settings.move_down) {
 			pos.translation.y -= 100.0 * time.delta_seconds();
-			pos.translation.y = pos.translation.y.clamp((-WINDOW_HEIGHT / 2.0) + 75.0, (WINDOW_HEIGHT / 2.0) - 75.0);
+			pos.translation.y = pos
+				.translation
+				.y
+				.clamp((-WINDOW_HEIGHT / 2.0) + 75.0, (WINDOW_HEIGHT / 2.0) - 75.0);
 		}
 	}
 }
@@ -213,8 +224,7 @@ fn move_paddle(
 /// Create and start game
 fn main() {
 	let mut app = App::new();
-	app.add_plugins(DefaultPlugins
-	.set(WindowPlugin {
+	app.add_plugins(DefaultPlugins.set(WindowPlugin {
 		primary_window: Some(Window {
 			resolution: WindowResolution::new(WINDOW_WIDTH, WINDOW_HEIGHT),
 			resizable: false,
@@ -230,7 +240,15 @@ fn main() {
 	#[cfg(debug_assertions)]
 	app.add_plugins(RapierDebugRenderPlugin::default());
 	app.add_event::<GameEvents>();
-	app.add_systems(Startup, (spawn_camera, spawn_border, spawn_players, spawn_ball));
+	app.add_systems(
+		Startup,
+		(
+			spawn_camera,
+			spawn_border,
+			spawn_players,
+			spawn_ball,
+		),
+	);
 	app.add_systems(Update, (move_paddle, detect_reset));
 	app.add_systems(PostUpdate, reset_ball);
 	app.run();
