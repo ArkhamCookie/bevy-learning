@@ -91,11 +91,40 @@ fn move_paddle(
 	}
 }
 
+/// Move ball
+fn move_ball(
+	mut balls: Query<(&mut Transform, &Ball)>,
+	time: Res<Time>,
+) {
+	for (mut pos, ball) in &mut balls {
+		pos.translation += ball.0.extend(0.0) * time.delta_seconds();
+	}
+}
+
+/// Add ball collision
+fn ball_collide(
+	mut balls: Query<(&Transform, &mut Ball)>,
+	paddles: Query<&Transform, With<Paddle>>,
+) {
+	for (ball, mut velocity) in &mut balls {
+		for paddle in &paddles {
+			if
+				ball.translation.x - BALL_SIZE / 2.0 < paddle.translation.x + PADDLE_WIDTH / 2.0 &&
+				ball.translation.y - BALL_SIZE / 2.0 < paddle.translation.y + PADDLE_HEIGHT / 2.0 &&
+				ball.translation.x + BALL_SIZE / 2.0 > paddle.translation.x - PADDLE_WIDTH / 2.0 &&
+				ball.translation.y + BALL_SIZE / 2.0 > paddle.translation.y - PADDLE_HEIGHT / 2.0 {
+					velocity.0 *= -1.0;
+				}
+
+		}
+	}
+}
+
 /// Create and start game
 fn main() {
 	let mut app = App::new();
 	app.add_plugins(DefaultPlugins);
 	app.add_systems(Startup, (spawn_camera, spawn_players, spawn_ball));
-	app.add_systems(Update, move_paddle);
+	app.add_systems(Update, (move_paddle, move_ball, ball_collide));
 	app.run();
 }
