@@ -1,6 +1,8 @@
 [workspace]
 resolver = "2"
-members = []
+members = [
+	"pong"
+]
 
 [profile.dev]
 opt-level = 1
