@@ -1,5 +1,8 @@
-use bevy::prelude::*;
+use bevy::{prelude::*, window::WindowResolution};
 use rand::Rng;
+
+const WINDOW_HEIGHT: f32 = 720.0;
+const WINDOW_WIDTH: f32 = 720.0;
 
 const PADDLE_HEIGHT: f32 = 150.0;
 const PADDLE_WIDTH: f32 = 10.0;
@@ -21,19 +24,9 @@ fn spawn_camera(mut commands: Commands) {
 
 /// Spawn in players and play area
 fn spawn_players(mut commands: Commands) {
-	// Spawn Play Area
-	commands.spawn(SpriteBundle {
-		sprite: Sprite {
-			color: Color::BLACK,
-			custom_size: Some(Vec2::new(700.0, 500.0)),
-			..Default::default()
-		},
-		..Default::default()
-	});
-
 	// Spawn Player 1
 	commands.spawn((SpriteBundle {
-		transform: Transform::from_translation(Vec3::new(-300.0, 0.0, 0.0)),
+		transform: Transform::from_translation(Vec3::new(-WINDOW_WIDTH / 2.0 + 20.0 , 0.0, 0.0)),
 		sprite: Sprite {
 			color: Color::WHITE,
 			custom_size: Some(Vec2::new(PADDLE_WIDTH, PADDLE_HEIGHT)),
@@ -47,7 +40,7 @@ fn spawn_players(mut commands: Commands) {
 
 	// Spawn Player 2
 	commands.spawn((SpriteBundle {
-		transform: Transform::from_translation(Vec3::new(300.0, 0.0, 0.0)),
+		transform: Transform::from_translation(Vec3::new(WINDOW_WIDTH / 2.0 + -20.0, 0.0, 0.0)),
 		sprite: Sprite {
 			color: Color::WHITE,
 			custom_size: Some(Vec2::new(PADDLE_WIDTH, PADDLE_HEIGHT)),
@@ -108,7 +101,7 @@ fn ball_collide(
 	paddles: Query<&Transform, With<Paddle>>,
 ) {
 	for (ball, mut velocity) in &mut balls {
-		if ball.translation.y.abs() + BALL_SIZE / 2.0 > 250.0 {
+		if ball.translation.y.abs() + BALL_SIZE / 2.0 > WINDOW_HEIGHT / 2.0 {
 			velocity.0.y *= -1.0;
 		}
 
@@ -129,7 +122,15 @@ fn ball_collide(
 /// Create and start game
 fn main() {
 	let mut app = App::new();
-	app.add_plugins(DefaultPlugins);
+	app.add_plugins(DefaultPlugins
+	.set(WindowPlugin {
+		primary_window: Some(Window {
+			resolution: WindowResolution::new(WINDOW_WIDTH, WINDOW_HEIGHT),
+			resizable: false,
+			..Default::default()
+		}),
+		..Default::default()
+	}));
 	app.add_systems(Startup, (spawn_camera, spawn_players, spawn_ball));
 	app.add_systems(Update, (move_paddle, move_ball, ball_collide));
 	app.run();
