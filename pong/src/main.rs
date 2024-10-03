@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use rand::Rng;
 
 const PADDLE_HEIGHT: f32 = 150.0;
 const PADDLE_WIDTH: f32 = 10.0;
@@ -114,6 +115,8 @@ fn ball_collide(
 				ball.translation.x + BALL_SIZE / 2.0 > paddle.translation.x - PADDLE_WIDTH / 2.0 &&
 				ball.translation.y + BALL_SIZE / 2.0 > paddle.translation.y - PADDLE_HEIGHT / 2.0 {
 					velocity.0 *= -1.0;
+					// TODO: Make ball direction based on paddle direction
+					velocity.0.y = rand::thread_rng().gen::<f32>() * 100.0;
 				}
 		}
 	}
