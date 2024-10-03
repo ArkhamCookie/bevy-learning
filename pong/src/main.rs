@@ -1,5 +1,6 @@
 use bevy::{prelude::*, window::WindowResolution};
 use bevy_rapier2d::prelude::*;
+use rand::Rng;
 
 const WINDOW_HEIGHT: f32 = 720.0;
 const WINDOW_WIDTH: f32 = 720.0;
@@ -17,10 +18,24 @@ struct Paddle {
 #[derive(Component)]
 struct Ball;
 
-#[derive(Component)]
+#[derive(Component, Clone, Copy)]
 enum Player {
 	Player1,
 	Player2,
+}
+
+impl Player {
+	fn start_speed(&self) -> Velocity {
+		match self {
+			Player::Player1 => Velocity::linear(Vec2::new(100.0, 0.0)),
+			Player::Player2 => Velocity::linear(Vec2::new(-100.0, 0.0)),
+		}
+	}
+}
+
+#[derive(Event)]
+enum GameEvents {
+	ResetBall(Player),
 }
 
 /// Spawn in camera
@@ -28,6 +43,7 @@ fn spawn_camera(mut commands: Commands) {
 	commands.spawn(Camera2dBundle::default());
 }
 
+/// Spawn in border of game
 fn spawn_border(mut commands: Commands) {
 	// Add collision to top of screen
 	commands.spawn((
@@ -41,11 +57,31 @@ fn spawn_border(mut commands: Commands) {
 	// Add collision to bottom of screen
 	commands.spawn((
 		SpatialBundle {
-			transform: Transform::from_translation(Vec3::new(0.0, - WINDOW_HEIGHT / 2.0, 0.0)),
+			transform: Transform::from_translation(Vec3::new(0.0, -WINDOW_HEIGHT / 2.0, 0.0)),
 			..Default::default()
 		},
 		RigidBody::Fixed,
 		Collider::cuboid(WINDOW_WIDTH / 2.0, 3.0)
+	));
+	// Add trigger for right side border of screen
+	commands.spawn((SpatialBundle {
+			transform: Transform::from_translation(Vec3::new(WINDOW_HEIGHT / 2.0, 0.0, 0.0)),
+			..Default::default()
+		},
+		RigidBody::Fixed,
+		Collider::cuboid(WINDOW_WIDTH / 2.0, 3.0),
+		Player::Player1,
+		Sensor,
+	));
+	// Add trigger for left side border of screen
+	commands.spawn((SpatialBundle {
+			transform: Transform::from_translation(Vec3::new(-WINDOW_HEIGHT / 2.0, 0.0, 0.0)),
+			..Default::default()
+		},
+		RigidBody::Fixed,
+		Collider::cuboid(WINDOW_WIDTH / 2.0, 3.0),
+		Player::Player2,
+		Sensor,
 	));
 }
 
@@ -99,6 +135,9 @@ fn spawn_ball(mut commands: Commands) {
 	},
 		Ball,
 		RigidBody::Dynamic,
+		CollidingEntities::default(),
+		// TODO: Fix ball not moving when `ActiveEvents` is tracked
+		// ActiveEvents::COLLISION_EVENTS,
 		Collider::ball(BALL_SIZE),
 		Velocity::linear(Vec2::new(100.0, 0.0)),
 		Restitution {
@@ -106,6 +145,49 @@ fn spawn_ball(mut commands: Commands) {
 			combine_rule: CoefficientCombineRule::Max,
 		}
 	));
+}
+
+/// Detect when a reset should be triggered
+fn detect_reset(
+	input: Res<ButtonInput<KeyCode>>,
+	balls: Query<&CollidingEntities, With<Ball>>,
+	goal: Query<&Player, With<Sensor>>,
+	mut game_events: EventWriter<GameEvents>,
+) {
+	if input.just_pressed(KeyCode::KeyR) {
+		let player = if rand::thread_rng().gen::<bool>() {
+			Player::Player1
+		} else {
+			Player::Player2
+		};
+
+		game_events.send(GameEvents::ResetBall(player));
+		return
+	}
+	for ball in &balls {
+		for hit in ball.iter() {
+			if let Ok(player) = goal.get(hit) {
+				game_events.send(GameEvents::ResetBall(*player));
+			}
+		}
+	}
+}
+
+/// Reset the ball when triggered
+fn reset_ball(
+	mut balls: Query<(&mut Transform, &mut Velocity), With<Ball>>,
+	mut game_events: EventReader<GameEvents>,
+) {
+	for events in game_events.read() {
+		match events {
+			GameEvents::ResetBall(player) => {
+				for (mut ball, mut speed) in &mut balls {
+					ball.translation = Vec3::ZERO;
+					*speed = player.start_speed();
+				}
+			},
+		}
+	}
 }
 
 /// Move paddles based on input
@@ -146,7 +228,9 @@ fn main() {
 	app.add_plugins(RapierPhysicsPlugin::<NoUserData>::default());
 	#[cfg(debug_assertions)]
 	app.add_plugins(RapierDebugRenderPlugin::default());
+	app.add_event::<GameEvents>();
 	app.add_systems(Startup, (spawn_camera, spawn_border, spawn_players, spawn_ball));
-	app.add_systems(Update, move_paddle);
+	app.add_systems(Update, (move_paddle, detect_reset));
+	app.add_systems(PostUpdate, reset_ball);
 	app.run();
 }
