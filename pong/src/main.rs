@@ -9,10 +9,12 @@ struct Paddle {
 	move_down: KeyCode,
 }
 
+/// Spawn in camera
 fn spawn_camera(mut commands: Commands) {
 	commands.spawn(Camera2dBundle::default());
 }
 
+/// Spawn in players and play area
 fn spawn_players(mut commands: Commands) {
 	// Spawn Play Area
 	commands.spawn(SpriteBundle {
@@ -53,6 +55,7 @@ fn spawn_players(mut commands: Commands) {
 	}));
 }
 
+/// Move paddles based on input
 fn move_paddle(
 	mut paddles: Query<(&mut Transform, &Paddle)>,
 	input: Res<ButtonInput<KeyCode>>,
@@ -71,6 +74,7 @@ fn move_paddle(
 	}
 }
 
+/// Create and start game
 fn main() {
 	let mut app = App::new();
 	app.add_plugins(DefaultPlugins);
