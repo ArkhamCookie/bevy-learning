@@ -17,15 +17,31 @@ struct Paddle {
 #[derive(Component)]
 struct Ball;
 
+#[derive(Component)]
+enum Player {
+	Player1,
+	Player2,
+}
+
 /// Spawn in camera
 fn spawn_camera(mut commands: Commands) {
 	commands.spawn(Camera2dBundle::default());
 }
 
 fn spawn_border(mut commands: Commands) {
+	// Add collision to top of screen
 	commands.spawn((
 		SpatialBundle {
 			transform: Transform::from_translation(Vec3::new(0.0, WINDOW_HEIGHT / 2.0, 0.0)),
+			..Default::default()
+		},
+		RigidBody::Fixed,
+		Collider::cuboid(WINDOW_WIDTH / 2.0, 3.0)
+	));
+	// Add collision to bottom of screen
+	commands.spawn((
+		SpatialBundle {
+			transform: Transform::from_translation(Vec3::new(0.0, - WINDOW_HEIGHT / 2.0, 0.0)),
 			..Default::default()
 		},
 		RigidBody::Fixed,
