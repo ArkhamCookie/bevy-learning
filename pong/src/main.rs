@@ -9,6 +9,9 @@ struct Paddle {
 	move_down: KeyCode,
 }
 
+#[derive(Component)]
+struct Ball(Vec2);
+
 /// Spawn in camera
 fn spawn_camera(mut commands: Commands) {
 	commands.spawn(Camera2dBundle::default());
@@ -55,6 +58,18 @@ fn spawn_players(mut commands: Commands) {
 	}));
 }
 
+fn spawn_ball(mut commands: Commands) {
+	commands.spawn((SpriteBundle {
+		transform: Transform::from_translation(Vec3::new(-300.0, 0.0, 0.0)),
+		sprite: Sprite {
+			color: Color::srgb(0.0, 0.0, 10.0),
+			custom_size: Some(Vec2::new(25.0, 25.0)),
+			..Default::default()
+		},
+		..Default::default()
+	}, Ball(Vec2::new(-100.0, 0.0))));
+}
+
 /// Move paddles based on input
 fn move_paddle(
 	mut paddles: Query<(&mut Transform, &Paddle)>,
@@ -78,7 +93,7 @@ fn move_paddle(
 fn main() {
 	let mut app = App::new();
 	app.add_plugins(DefaultPlugins);
-	app.add_systems(Startup, (spawn_camera, spawn_players));
+	app.add_systems(Startup, (spawn_camera, spawn_players, spawn_ball));
 	app.add_systems(Update, move_paddle);
 	app.run();
 }
