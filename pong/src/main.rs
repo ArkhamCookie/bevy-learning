@@ -120,7 +120,7 @@ fn ball_collide(
 				ball.translation.y + BALL_SIZE / 2.0 > paddle.translation.y - PADDLE_HEIGHT / 2.0 {
 					velocity.0 *= -1.0;
 					// TODO: Make ball direction based on paddle direction
-					velocity.0.y = rand::thread_rng().gen::<f32>() * 100.0;
+					velocity.0.y = rand::thread_rng().gen_range(-1.0..1.0) * 100.0;
 				}
 		}
 	}
