@@ -115,7 +115,6 @@ fn ball_collide(
 				ball.translation.y + BALL_SIZE / 2.0 > paddle.translation.y - PADDLE_HEIGHT / 2.0 {
 					velocity.0 *= -1.0;
 				}
-
 		}
 	}
 }
