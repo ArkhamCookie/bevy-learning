@@ -133,6 +133,8 @@ fn main() {
 		..Default::default()
 	}));
 	app.add_plugins(RapierPhysicsPlugin::<NoUserData>::default());
+	#[cfg(debug_assertions)]
+	app.add_plugins(RapierDebugRenderPlugin::default());
 	app.add_systems(Startup, (spawn_camera, spawn_players, spawn_ball));
 	app.add_systems(Update, (move_paddle, move_ball, ball_collide));
 	app.run();
