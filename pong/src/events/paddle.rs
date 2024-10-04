@@ -11,7 +11,7 @@ pub(crate) fn move_paddle(
 ) {
 	for (mut pos, settings) in &mut paddles {
 		if input.pressed(settings.move_up) {
-			pos.translation.y += 100.0 * time.delta_seconds();
+			pos.translation.y += 175.0 * time.delta_seconds();
 			pos.translation.y = pos
 				.translation
 				.y
@@ -19,7 +19,7 @@ pub(crate) fn move_paddle(
 		}
 
 		if input.pressed(settings.move_down) {
-			pos.translation.y -= 100.0 * time.delta_seconds();
+			pos.translation.y -= 175.0 * time.delta_seconds();
 			pos.translation.y = pos
 				.translation
 				.y
