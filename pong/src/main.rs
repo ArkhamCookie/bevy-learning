@@ -1,9 +1,9 @@
+use events::game_events::*;
+use events::reset::*;
+
 use internal::components::*;
 use internal::consts::*;
 use internal::spawn::*;
-
-use events::game_events::*;
-use events::reset::*;
 
 use bevy::prelude::*;
 use bevy::utils::HashMap;
