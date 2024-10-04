@@ -1,9 +1,9 @@
-use events::game_events::*;
+use events::game_events::GameEvents;
 use events::paddle::move_paddle;
-use events::reset::*;
+use events::reset::{detect_reset, reset_ball};
 use events::score::{score_run, Score};
 
-use internal::consts::*;
+use internal::consts::{WINDOW_HEIGHT, WINDOW_WIDTH};
 use internal::spawn::*;
 
 use bevy::prelude::*;
