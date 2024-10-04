@@ -22,7 +22,7 @@ struct Paddle {
 #[derive(Component)]
 struct Ball;
 
-#[derive(Component, Clone, Copy)]
+#[derive(Component, Clone, Copy, PartialEq, Eq, Hash)]
 enum Player {
 	Player1,
 	Player2,
@@ -40,7 +40,11 @@ impl Player {
 #[derive(Event)]
 enum GameEvents {
 	ResetBall(Player),
+	GainPoint(Player),
 }
+
+#[derive(Default, Resource)]
+struct Score(HashMap<Player, i32>);
 
 /// Spawn in camera
 fn spawn_camera(mut commands: Commands) {
@@ -245,6 +249,7 @@ fn detect_reset(
 		for hit in ball.iter() {
 			if let Ok(player) = goal.get(hit) {
 				game_events.send(GameEvents::ResetBall(*player));
+				game_events.send(GameEvents::GainPoint(*player));
 			}
 		}
 	}
@@ -256,12 +261,30 @@ fn reset_ball(
 	mut game_events: EventReader<GameEvents>,
 ) {
 	for events in game_events.read() {
-		match events {
-			GameEvents::ResetBall(player) => {
-				for (mut ball, mut speed) in &mut balls {
-					ball.translation = Vec3::ZERO;
-					*speed = player.start_speed();
+		if let GameEvents::ResetBall(player) = events {
+			for (mut ball, mut speed) in &mut balls {
+				ball.translation = Vec3::ZERO;
+				*speed = player.start_speed();
+			}
+		}
+	}
+}
+
+/// Detect if player scored and give
+fn score_run(
+	mut events: EventReader<GameEvents>,
+	mut score_text: Query<(&mut Text, &Player)>,
+	mut scores: ResMut<Score>,
+) {
+	for event in events.read() {
+		if let GameEvents::GainPoint(player) = event {
+			*scores.0.entry(*player).or_default() += 1;
+			let scores = scores.0.get(player).cloned().unwrap_or(0);
+			for (mut text, owner) in &mut score_text {
+				if owner != player {
+					continue;
 				}
+				text.sections[0].value = scores.to_string();
 			}
 		}
 	}
@@ -307,6 +330,7 @@ fn main() {
 		gravity: Vec2::ZERO,
 		..RapierConfiguration::new(1.0)
 	});
+	app.insert_resource(Score(HashMap::new()));
 	app.add_plugins(RapierPhysicsPlugin::<NoUserData>::default());
 	#[cfg(debug_assertions)]
 	app.add_plugins(RapierDebugRenderPlugin::default());
@@ -322,6 +346,6 @@ fn main() {
 		),
 	);
 	app.add_systems(Update, (move_paddle, detect_reset));
-	app.add_systems(PostUpdate, reset_ball);
+	app.add_systems(PostUpdate, (reset_ball, score_run));
 	app.run();
 }
