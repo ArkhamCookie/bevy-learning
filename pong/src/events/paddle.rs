@@ -15,7 +15,7 @@ pub(crate) fn move_paddle(
 			pos.translation.y = pos
 				.translation
 				.y
-				.clamp((-WINDOW_HEIGHT / 2.0) + 75.0, (WINDOW_HEIGHT / 2.) - 75.0);
+				.clamp((-WINDOW_HEIGHT / 2.0) + 75.0, (WINDOW_HEIGHT / 2.0) - 75.0);
 		}
 
 		if input.pressed(settings.move_down) {
