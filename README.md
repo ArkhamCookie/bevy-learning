@@ -17,3 +17,4 @@ A repo to learn about and experiment with the [Bevy](https://bevyengine.org) gam
 ### Pong Game
 
 - [Zero to Pong with Bevy](https://www.youtube.com/watch?v=cfWneHSph4E)
+- [Advancing Pong Part A: With Physics using Bevy Rapier](https://www.youtube.com/watch?v=gRvW6I5WpW0)
