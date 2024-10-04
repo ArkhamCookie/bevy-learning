@@ -1,5 +1,9 @@
-use bevy::{prelude::*, window::WindowResolution};
+use bevy::prelude::*;
+use bevy::utils::HashMap;
+use bevy::window::WindowResolution;
+
 use bevy_rapier2d::prelude::*;
+
 use rand::Rng;
 
 const WINDOW_HEIGHT: f32 = 720.0;
