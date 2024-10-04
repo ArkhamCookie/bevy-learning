@@ -5,7 +5,7 @@ use bevy::prelude::*;
 use bevy::utils::HashMap;
 
 #[derive(Default, Resource)]
-pub(crate) struct Score(HashMap<Player, i32>);
+pub(crate) struct Score(pub(crate) HashMap<Player, i32>);
 
 /// Detect if player scored and give
 pub(crate) fn score_run(
