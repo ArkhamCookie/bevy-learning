@@ -1,5 +1,6 @@
 use components::*;
 use player::*;
+use reset::*;
 use spawn::*;
 
 use bevy::prelude::*;
@@ -8,10 +9,9 @@ use bevy::window::WindowResolution;
 
 use bevy_rapier2d::prelude::*;
 
-use rand::Rng;
-
 mod components;
 mod player;
+mod reset;
 mod spawn;
 
 const WINDOW_HEIGHT: f32 = 720.0;
@@ -29,48 +29,6 @@ enum GameEvents {
 
 #[derive(Default, Resource)]
 struct Score(HashMap<Player, i32>);
-
-/// Detect when a reset should be triggered
-fn detect_reset(
-	input: Res<ButtonInput<KeyCode>>,
-	balls: Query<&CollidingEntities, With<Ball>>,
-	goal: Query<&Player, With<Sensor>>,
-	mut game_events: EventWriter<GameEvents>,
-) {
-	if input.just_pressed(KeyCode::KeyR) {
-		let player = if rand::thread_rng().gen::<bool>() {
-			Player::Player1
-		} else {
-			Player::Player2
-		};
-
-		game_events.send(GameEvents::ResetBall(player));
-		return;
-	}
-	for ball in &balls {
-		for hit in ball.iter() {
-			if let Ok(player) = goal.get(hit) {
-				game_events.send(GameEvents::ResetBall(*player));
-				game_events.send(GameEvents::GainPoint(*player));
-			}
-		}
-	}
-}
-
-/// Reset the ball when triggered
-fn reset_ball(
-	mut balls: Query<(&mut Transform, &mut Velocity), With<Ball>>,
-	mut game_events: EventReader<GameEvents>,
-) {
-	for events in game_events.read() {
-		if let GameEvents::ResetBall(player) = events {
-			for (mut ball, mut speed) in &mut balls {
-				ball.translation = Vec3::ZERO;
-				*speed = player.start_speed();
-			}
-		}
-	}
-}
 
 /// Detect if player scored and give
 fn score_run(
