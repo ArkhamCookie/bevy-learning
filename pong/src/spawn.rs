@@ -3,6 +3,7 @@ use crate::{Ball, Paddle};
 use crate::{BALL_SIZE, PADDLE_HEIGHT, PADDLE_WIDTH, WINDOW_HEIGHT, WINDOW_WIDTH};
 
 use bevy::prelude::*;
+
 use bevy_rapier2d::prelude::*;
 
 /// Spawn in camera
