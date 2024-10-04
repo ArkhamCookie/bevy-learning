@@ -1,3 +1,5 @@
+use components::*;
+
 use bevy::prelude::*;
 use bevy::utils::HashMap;
 use bevy::window::WindowResolution;
@@ -6,21 +8,14 @@ use bevy_rapier2d::prelude::*;
 
 use rand::Rng;
 
+mod components;
+
 const WINDOW_HEIGHT: f32 = 720.0;
 const WINDOW_WIDTH: f32 = 720.0;
 
 const PADDLE_HEIGHT: f32 = 150.0;
 const PADDLE_WIDTH: f32 = 10.0;
 const BALL_SIZE: f32 = 25.0;
-
-#[derive(Component)]
-struct Paddle {
-	move_up: KeyCode,
-	move_down: KeyCode,
-}
-
-#[derive(Component)]
-struct Ball;
 
 #[derive(Component, Clone, Copy, PartialEq, Eq, Hash)]
 enum Player {
