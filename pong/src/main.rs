@@ -1,7 +1,6 @@
 use events::game_events::*;
 use events::reset::*;
-use events::score::score_run;
-use events::score::Score;
+use events::score::{score_run, Score};
 
 use internal::components::*;
 use internal::consts::*;
