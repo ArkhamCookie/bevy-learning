@@ -5,10 +5,10 @@ use bevy::prelude::*;
 use bevy::utils::HashMap;
 
 #[derive(Default, Resource)]
-struct Score(HashMap<Player, i32>);
+pub(crate) struct Score(HashMap<Player, i32>);
 
 /// Detect if player scored and give
-fn score_run(
+pub(crate) fn score_run(
 	mut events: EventReader<GameEvents>,
 	mut score_text: Query<(&mut Text, &Player)>,
 	mut scores: ResMut<Score>,
