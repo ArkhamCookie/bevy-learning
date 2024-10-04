@@ -5,6 +5,11 @@ use crate::{BALL_SIZE, PADDLE_HEIGHT, PADDLE_WIDTH, WINDOW_HEIGHT, WINDOW_WIDTH}
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
+/// Spawn in camera
+pub(crate) fn spawn_camera(mut commands: Commands) {
+	commands.spawn(Camera2dBundle::default());
+}
+
 /// Spawn in border of game
 pub(crate) fn spawn_border(mut commands: Commands) {
 	// Add collision to top of screen

@@ -30,11 +30,6 @@ enum GameEvents {
 #[derive(Default, Resource)]
 struct Score(HashMap<Player, i32>);
 
-/// Spawn in camera
-fn spawn_camera(mut commands: Commands) {
-	commands.spawn(Camera2dBundle::default());
-}
-
 /// Detect when a reset should be triggered
 fn detect_reset(
 	input: Res<ButtonInput<KeyCode>>,
