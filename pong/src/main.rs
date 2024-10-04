@@ -330,6 +330,7 @@ fn main() {
 		gravity: Vec2::ZERO,
 		..RapierConfiguration::new(1.0)
 	});
+	app.insert_resource(Score(HashMap::new()));
 	app.add_plugins(RapierPhysicsPlugin::<NoUserData>::default());
 	#[cfg(debug_assertions)]
 	app.add_plugins(RapierDebugRenderPlugin::default());
