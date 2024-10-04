@@ -1,7 +1,7 @@
 use crate::events::game_events::GameEvents;
 
-use crate::components::Ball;
-use crate::player::Player;
+use crate::internal::components::Ball;
+use crate::internal::player::Player;
 
 use bevy::prelude::*;
 

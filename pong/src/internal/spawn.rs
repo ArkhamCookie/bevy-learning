@@ -1,6 +1,6 @@
-use crate::components::{Ball, Paddle};
-use crate::consts::{BALL_SIZE, PADDLE_HEIGHT, PADDLE_WIDTH, WINDOW_HEIGHT, WINDOW_WIDTH};
-use crate::player::Player;
+use crate::internal::components::{Ball, Paddle};
+use crate::internal::consts::{BALL_SIZE, PADDLE_HEIGHT, PADDLE_WIDTH, WINDOW_HEIGHT, WINDOW_WIDTH};
+use crate::internal::player::Player;
 
 use bevy::prelude::*;
 

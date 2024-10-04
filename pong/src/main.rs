@@ -1,7 +1,7 @@
-use components::*;
-use consts::*;
-use player::*;
-use spawn::*;
+use internal::components::*;
+use internal::consts::*;
+use internal::player::*;
+use internal::spawn::*;
 
 use events::game_events::*;
 use events::reset::*;
@@ -12,11 +12,8 @@ use bevy::window::WindowResolution;
 
 use bevy_rapier2d::prelude::*;
 
-mod components;
-mod consts;
 mod events;
-mod player;
-mod spawn;
+mod internal;
 
 #[derive(Default, Resource)]
 struct Score(HashMap<Player, i32>);

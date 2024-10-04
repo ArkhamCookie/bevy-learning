@@ -1,4 +1,4 @@
-use crate::player::Player;
+use crate::internal::player::Player;
 
 use bevy::prelude::*;
 
